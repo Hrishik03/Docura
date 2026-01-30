@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.so
+*.db
+*.sqlite3
+chroma_db/
+.env
+.env.local
+venv/
+env/
+ENV/
+*.log
