@@ -1,16 +1,19 @@
-from fastapi import FastAPI
-from fastapi import UploadFile, File, Form
+from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-from  utils import upload_to_supabase
+from pydantic import BaseModel
+import uuid
+
+from utils import upload_to_supabase
 from extractor import extract_text
 from chunker import chunk_text
 from embeddings import embed_text_list
 from vectorstore import add_to_db
 from rag import generate_answer
-from pydantic import BaseModel
-import uuid
+from supabase_client import supabase
 
 app = FastAPI()
+
+print("🚀 FastAPI app starting...")
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,26 +22,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-
-@app.post("/upload")
-async def upload_file(file: UploadFile = File(...)):
-    doc_id = str(uuid.uuid4())
-
-    file_url = upload_to_supabase(file)
-    text = extract_text(file_url)
-    chunks = chunk_text(text)
-    embeddings = embed_text_list(chunks)
-
-    doc_id = file.filename
-    add_to_db(chunks, embeddings, doc_id, file_url)
-
-    return {
-    "doc_id": doc_id,
-    "file_url": file_url,
-    "num_chunks": len(chunks),
-    "status": "Document uploaded successfully"
-}
 
 @app.post("/upload")
 async def upload_file(
@@ -54,10 +37,8 @@ async def upload_file(
     chunks = chunk_text(text)
     embeddings = embed_text_list(chunks)
 
-    # vector DB (RAG)
     add_to_db(chunks, embeddings, doc_id, file_url)
 
-    # metadata DB (sidebar)
     supabase.table("documents").insert({
         "user_id": user_id,
         "doc_id": doc_id,
@@ -77,12 +58,8 @@ class QueryRequest(BaseModel):
     query: str
     doc_id: str
 
-
 @app.post("/query")
 async def query_rag(request: QueryRequest):
-    """
-    Takes user query → RAG pipeline → returns final LLM answer + retrieved chunks.
-    """
     result = generate_answer(query=request.query, doc_id=request.doc_id)
     return result
 
