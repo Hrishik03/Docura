@@ -1,7 +1,6 @@
 import fitz  # PyMuPDF
 from pathlib import Path
 from docx import Document
-import textract
 import requests
 from io import BytesIO
 import easyocr
@@ -36,9 +35,6 @@ def extract_text(file_path_or_url: str) -> str:
         if extension == "docx":
             return extract_docx_from_url(file_path_or_url)
 
-        if extension == "doc":
-            return extract_doc_from_url(file_path_or_url)
-
         raise ValueError(f"Unsupported URL file type: {extension}")
 
 
@@ -55,9 +51,6 @@ def extract_text(file_path_or_url: str) -> str:
 
     if ext == ".docx":
         return extract_docx_local(file_path)
-
-    if ext == ".doc":
-        return extract_doc_local(file_path)
 
     raise ValueError(f"Unsupported local file type: {ext}")
 
@@ -238,16 +231,3 @@ def extract_docx_from_url(url: str) -> str:
     file_bytes = BytesIO(response.content)
     doc = Document(file_bytes)
     return "\n".join([p.text for p in doc.paragraphs])
-
-
-# DOC EXTRACTION — LOCAL
-def extract_doc_local(path: Path) -> str:
-    text = textract.process(str(path))
-    return text.decode("utf-8", errors="ignore")
-
-# DOC EXTRACTION — URL
-def extract_doc_from_url(url: str) -> str:
-    response = requests.get(url)
-    file_bytes = BytesIO(response.content)
-    text = textract.process(file_bytes)
-    return text.decode("utf-8", errors="ignore")
