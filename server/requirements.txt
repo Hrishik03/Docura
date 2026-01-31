@@ -11,4 +11,3 @@ PyMuPDF
 easyocr
 Pillow
 supabase
-textract
