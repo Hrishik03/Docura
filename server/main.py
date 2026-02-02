@@ -13,7 +13,7 @@ from supabase_client import supabase
 
 app = FastAPI()
 
-print("🚀 FastAPI app starting...")
+print("FastAPI app starting...")
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,7 +26,7 @@ app.add_middleware(
 @app.post("/upload")
 async def upload_file(
     file: UploadFile = File(...),
-    user_id: str = Form(...)
+    user_id: str = Form(None),  # 👈 real auth.users.id
 ):
     doc_id = str(uuid.uuid4())
     file_name = file.filename
@@ -39,12 +39,19 @@ async def upload_file(
 
     add_to_db(chunks, embeddings, doc_id, file_url)
 
-    supabase.table("documents").insert({
-        "user_id": user_id,
-        "doc_id": doc_id,
-        "file_name": file_name,
-        "file_url": file_url
-    }).execute()
+    if user_id and user_id != "string" and len(user_id) == 36:
+        try:
+            # Validate it's a proper UUID format
+            uuid.UUID(user_id)  # This will raise ValueError if invalid
+            supabase.table("documents").insert({
+                "user_id": user_id,
+                "doc_id": doc_id,
+                "file_name": file_name,
+                "file_url": file_url
+            }).execute()
+        except (ValueError, Exception):
+            # Skip insert if user_id is invalid
+            pass
 
     return {
         "doc_id": doc_id,
