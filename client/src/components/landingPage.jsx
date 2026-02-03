@@ -23,7 +23,7 @@ const landingPage = ({onUploadClick}) => {
         </h1>
 
         <p className="text-lg text-slate-600 max-w-xl mx-auto mb-10 bg-gradient-to-r from-[#6D5DF6] to-[#1C2A4A] bg-clip-text text-transparent">
-          Upload your PDFs, TXTs, or DOCX files and get instant answers with our AI-powered RAG pipeline (file limit: 50MB).
+        Chat with your documents and get answers in seconds, Upload PDFs, DOCX, or TXT files up to 50MB each
         </p>
 
         <button

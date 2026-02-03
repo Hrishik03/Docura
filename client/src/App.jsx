@@ -48,7 +48,8 @@ const App = () => {
         const formData = new FormData();
         formData.append("file", file);
 
-        const res = await fetch("http://127.0.0.1:8000/upload", {
+        const API_BASE = import.meta.env.VITE_API_URL;
+        const res = await fetch(`${API_BASE}/upload`, { 
           method: "POST",
           body: formData,
         });
