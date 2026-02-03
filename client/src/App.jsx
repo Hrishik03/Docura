@@ -49,8 +49,11 @@ const App = () => {
         formData.append("file", file);
 
         const API_BASE = import.meta.env.VITE_API_URL;
-        const res = await fetch(`${API_BASE}/upload`, { 
+        const res = await fetch(`${API_BASE}/upload`, {
           method: "POST",
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
           body: formData,
         });
 

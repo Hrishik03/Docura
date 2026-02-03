@@ -119,7 +119,10 @@ const chatPage = ({fileName, docId, onLogout, onHome}) => {
       const API_BASE = import.meta.env.VITE_API_URL;
       const res = await fetch(`${API_BASE}/query`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "ngrok-skip-browser-warning": "true",
+        },
         body: JSON.stringify({
           query: trimmed,
           doc_id: docId,
