@@ -7,6 +7,7 @@ import docIcon from "../assets/file-docx.png";
 import txtIcon from "../assets/file-generic.png";
 import fileIcon from "../assets/file.png";
 import bgImg from "../assets/bg_img.png";
+import sendIcon from "../assets/send.png";
 
 const UserMessage = ({ text }) => (
     <div className="flex justify-end">
@@ -241,7 +242,7 @@ const chatPage = ({fileName, docId, onLogout, onHome}) => {
               disabled={isLoading} 
               className="p-2 rounded-full hover:bg-indigo-100 transition"
             >
-              <img src="/src/assets/send.png" alt="send" className="w-6 h-6" />
+              <img src={sendIcon} alt="send" className="w-6 h-6" />
             </button>
           </div>
 
